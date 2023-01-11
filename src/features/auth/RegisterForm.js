@@ -1,8 +1,15 @@
 import { useState } from "react";
-
+import { toast } from "react-toastify";
+import { useAuth } from "../../contexts/AuthContext";
+import { useLoading } from "../../contexts/LoadingContext";
 import { validateRegister } from "../../validations/userValidate";
 
-function RegisterForm() {
+function RegisterForm(props) {
+  // ใช้ Custom hook
+  const { register } = useAuth();
+  const { startLoading, stopLoading } = useLoading();
+  const { onSuccess } = props;
+
   const [input, setInput] = useState({
     firstName: "",
     lastName: "",
@@ -12,11 +19,23 @@ function RegisterForm() {
   });
 
   const handleChangeInput = (ev) => setInput({ ...input, [ev.target.name]: ev.target.value }); // เอาค่า name ของ element มาเป็น key ต้องใส่ Square bracket ด้วย
-  const handleSubmitForm = (ev) => {
+  const handleSubmitForm = async (ev) => {
     ev.preventDefault();
-    const { value, error } = validateRegister(input);
-    console.log(value);
+    const { error } = validateRegister(input);
     console.log(error);
+    if (error) return toast.error(error.message);
+
+    try {
+      startLoading();
+      await register(input);
+      toast.success("success register");
+
+      onSuccess();
+    } catch (err) {
+      toast.error(err.response.data.message);
+    } finally {
+      stopLoading();
+    }
   };
 
   return (
