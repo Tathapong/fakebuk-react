@@ -7,6 +7,7 @@ function Modal({ title, children, modalIsOpen, modalOnClose }) {
 
   useEffect(() => {
     const modalObj = new BsModal(modalEl.current);
+
     setModal(modalObj);
   }, []);
 
@@ -27,7 +28,7 @@ function Modal({ title, children, modalIsOpen, modalOnClose }) {
       }}
     >
       <div className="modal-dialog modal-dialog-centered" onClick={(ev) => ev.stopPropagation()}>
-        {/* ev.stopPropagation() เป็นการยกเลิก Propagation การไม่ให้ปิด ถ้าคลิ๊กที่กล่อง modal เพราะเราไปใส่ onClick ให้มันในชั้นบนสุด ลองไปหาศึกษาเพิ่ม */}
+        {/* ev.stopPropagation() เป็นการยกเลิก Propagation การไม่ให้ปิด ถ้าคลิ๊กที่กล่อง modal  ลองไปหาศึกษาเพิ่ม */}
         <div className="modal-content">
           <div className="modal-header">
             <button type="button" className="btn-close invisible"></button>

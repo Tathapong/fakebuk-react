@@ -22,7 +22,6 @@ function RegisterForm(props) {
   const handleSubmitForm = async (ev) => {
     ev.preventDefault();
     const { error } = validateRegister(input);
-    console.log(error);
     if (error) return toast.error(error.message);
 
     try {
