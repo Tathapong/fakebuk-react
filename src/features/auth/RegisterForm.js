@@ -28,7 +28,6 @@ function RegisterForm(props) {
       startLoading();
       await register(input);
       toast.success("success register");
-
       onSuccess();
     } catch (err) {
       toast.error(err.response.data.message);
