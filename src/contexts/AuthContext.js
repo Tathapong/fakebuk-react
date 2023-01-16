@@ -9,12 +9,17 @@ function AuthContextProvider({ children }) {
 
   const register = async (input) => {
     const res = await authService.register(input);
-    setTimeout(() => setUser(true), 0);
-    // setUser(true);
+    setTimeout(() => setUser(true), 1);
     addAccesToken(res.data.token);
   };
 
-  return <AuthContext.Provider value={{ user, register }}>{children}</AuthContext.Provider>;
+  const login = async (input) => {
+    const res = await authService.login(input);
+    setUser(true);
+    addAccesToken(res.data.token);
+  };
+
+  return <AuthContext.Provider value={{ user, register, login }}>{children}</AuthContext.Provider>;
 }
 
 // Custom hook
