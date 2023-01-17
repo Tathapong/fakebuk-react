@@ -11,7 +11,7 @@ function App() {
       {loading && <Spinner />}
       <div className="App">
         <Router />
-        <ToastContainer autoClose="2500" theme="colored" />
+        <ToastContainer autoClose="2500" theme="colored" position="bottom-center" />
       </div>
     </>
   );
