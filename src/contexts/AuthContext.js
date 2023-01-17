@@ -1,4 +1,5 @@
 import { createContext, useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import * as authService from "../api/authApi";
 import { addAccesToken, getAccesToken, removeAccesToken } from "../utilities/localstorage";
 import Spinner from "../components/ui/Spinner";
@@ -8,19 +9,20 @@ const AuthContext = createContext();
 function AuthContextProvider({ children }) {
   const [user, setUser] = useState(null);
   const [initialLoading, setInitialLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Use effect สำหรับ เรียกข้อมูล User แต่ถ้าไม่มี Token ก็ไม่ต้องทำ
   useEffect(() => {
-    const fetch = async () => {
+    const fetchMe = async () => {
       try {
-        await getMe();
+        if (getAccesToken()) await getMe();
       } catch (err) {
+        console.log(err);
       } finally {
-        setInitialLoading(false);
+        setInitialLoading(false); // ในกรณีที่มี Token แล้วทำการ Refresh หน้า Postpage มันจะกระพริบหน้า Login แปปนึง จึงเขียน Condition เพิ่มให้เป็นหน้า Spinner แทน
       }
     };
-    if (getAccesToken()) fetch();
-    setInitialLoading(false); // ในกรณีที่มี Token แล้วทำการ Refresh หน้า Postpage มันจะกระพริบหน้า Login แปปนึง จึงเขียน Condition เพิ่มให้เป็นหน้า Spinner แทน
+    fetchMe();
   }, []);
 
   const getMe = async () => {
@@ -30,14 +32,14 @@ function AuthContextProvider({ children }) {
 
   const register = async (input) => {
     const res = await authService.register(input);
-    setTimeout(() => setUser(true), 1);
     addAccesToken(res.data.token);
+    setTimeout(() => getMe(), 1);
   };
 
   const login = async (input) => {
     const res = await authService.login(input);
-    setUser(true);
     addAccesToken(res.data.token);
+    await getMe();
   };
 
   const logout = async () => {

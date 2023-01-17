@@ -1,10 +1,12 @@
 import { FacebookLogo } from "../../components/icons";
+import { Link } from "react-router-dom";
+
 function Logo() {
   return (
     <div className="py-2 flex-1">
-      <a className="navbar-brand" href="/">
+      <Link className="navbar-brand" to="/">
         <FacebookLogo />
-      </a>
+      </Link>
     </div>
   );
 }
