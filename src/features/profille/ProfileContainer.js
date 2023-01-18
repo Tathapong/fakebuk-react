@@ -2,15 +2,15 @@ import ProfileCover from "../profille/ProfileCover";
 import ProfileInfo from "./ProfileInfo";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 
 function ProfileContainer() {
-  const params = useParams();
-  const [profile, setProfile] = useState(null);
+  const { id } = useParams();
 
   return (
     <div className="shadow-sm pb-2" style={{ backgroundImage: "linear-gradient(#f0f2f5, #fff)" }}>
       <ProfileCover />
-      <ProfileInfo />
+      <ProfileInfo isMe={!id} />
     </div>
   );
 }
