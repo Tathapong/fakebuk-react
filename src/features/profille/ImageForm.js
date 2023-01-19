@@ -1,13 +1,39 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Avatar from "../../components/ui/Avatar";
 import CoverImage from "../../components/ui/CoverImage";
+import { useAuth } from "../../contexts/AuthContext";
+import { useLoading } from "../../contexts/LoadingContext";
+import { toast } from "react-toastify";
 
-function ProfileImageForm({ title, profileImage, coverImage }) {
+function ProfileImageForm({ title, profileImage, coverImage, onSuccess }) {
   const [file, setFile] = useState(null);
 
   const inputEl = useRef();
 
+  const { updateUser } = useAuth();
+  const { startLoading, stopLoading } = useLoading();
+
   const handleClickInputUpload = () => inputEl.current.click();
+  const handelClickSave = async () => {
+    try {
+      startLoading();
+      const formData = new FormData(); // ส่งข้อมูลในรูปแบบ multipart/form data ต้องกำหนดเป็น Class
+
+      // ใส่ข้อมูลเข้าไปใน formData
+      if (profileImage) formData.append("profileImage", file);
+      else if (coverImage) formData.append("coverImage", file);
+
+      await updateUser(formData);
+      toast.success("success upload");
+      setFile(null);
+      onSuccess();
+    } catch (err) {
+      console.log(err);
+      toast.error(err.response?.data.message);
+    } finally {
+      stopLoading();
+    }
+  };
 
   return (
     <>
@@ -18,13 +44,16 @@ function ProfileImageForm({ title, profileImage, coverImage }) {
           className="d-none"
           ref={inputEl}
           onChange={(ev) => {
+            console.log(ev.target.files[0]);
             if (ev.target.files[0]) setFile(ev.target.files[0]); // กำหนดเพื่อว่าเวลากดเลือกรูป หากไม่เลือก(Cancel) ตัว ev.target.files[0] มันจะเป็น undefined ทำให้ค่าใน State เปลี่ยน ซึ่งมันไม่ควรเปลี่ยนมันควรจะเป็นค่าเดิม
           }}
         />
         <div>
           {file && (
             <>
-              <button className="btn btn-link text-decoration-none hover-bg-gray-100">Save</button>
+              <button className="btn btn-link text-decoration-none hover-bg-gray-100" onClick={handelClickSave}>
+                Save
+              </button>
               <button
                 className="btn btn-link text-decoration-none hover-bg-gray-100"
                 onClick={() => {
@@ -50,18 +79,18 @@ function ProfileImageForm({ title, profileImage, coverImage }) {
       {profileImage !== undefined && (
         <div className="text-center mt-3">
           <span onClick={handleClickInputUpload}>
-            <Avatar src={file ? URL.createObjectURL(file) : ""} size="168" />
+            <Avatar src={file ? URL.createObjectURL(file) : profileImage} size="168" />
           </span>
         </div>
       )}
 
       {coverImage !== undefined && (
         <div
-          className="position-relative mt-3 rounded-lg max-w-274 max-h-101 overflow-hidden"
+          className="position-relative mt-3 rounded-lg max-w-274 max-h-101 overflow-hidden cursor-pointer"
           style={{ aspectRatio: "1096/404" }}
         >
           <span onClick={handleClickInputUpload}>
-            <CoverImage src={file ? URL.createObjectURL(file) : ""} />
+            <CoverImage src={file ? URL.createObjectURL(file) : coverImage} />
           </span>
         </div>
       )}

@@ -5,6 +5,7 @@ function Avatar({ src, size }) {
     <img
       src={src || profileImage}
       className="rounded-circle cursor-pointer"
+      style={{ objectFit: "cover" }}
       width={size || "60"}
       height={size || "60"}
       alt="user"

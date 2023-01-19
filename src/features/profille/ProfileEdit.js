@@ -16,8 +16,8 @@ function ProfileEdit() {
         <i className="fa-solid fa-pen" /> Edit Profile
       </button>
       <Modal title="Edit profile" open={isOpen} onClose={() => setIsOpen(false)}>
-        <ImageForm title="Profile Picture" profileImage={profileImage} />
-        <ImageForm title="Cover Photo" coverImage={coverImage} />
+        <ImageForm title="Profile Picture" onSuccess={() => setIsOpen(false)} profileImage={profileImage} />
+        <ImageForm title="Cover Photo" onSuccess={() => setIsOpen(false)} coverImage={coverImage} />
       </Modal>
     </>
   );

@@ -1,6 +1,7 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as authService from "../api/authApi";
+import * as userService from "../api/userApi";
 import { addAccesToken, getAccesToken, removeAccesToken } from "../utilities/localstorage";
 import Spinner from "../components/ui/Spinner";
 
@@ -47,9 +48,16 @@ function AuthContextProvider({ children }) {
     removeAccesToken();
   };
 
+  const updateUser = async (input) => {
+    const res = await userService.updateUser(input);
+    setUser(res.data.user);
+  };
+
   if (initialLoading) return <Spinner />;
   return (
-    <AuthContext.Provider value={{ user, register, login, logout, initialLoading }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, register, login, logout, initialLoading, updateUser }}>
+      {children}
+    </AuthContext.Provider>
   );
 }
 

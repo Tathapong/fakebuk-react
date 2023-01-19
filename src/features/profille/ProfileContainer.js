@@ -1,8 +1,6 @@
 import ProfileCover from "../profille/ProfileCover";
 import ProfileInfo from "./ProfileInfo";
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { useAuth } from "../../contexts/AuthContext";
 
 function ProfileContainer() {
   const { id } = useParams();
