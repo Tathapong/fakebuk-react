@@ -20,8 +20,8 @@ function ProfileImageForm({ title, profileImage, coverImage, onSuccess }) {
       const formData = new FormData(); // ส่งข้อมูลในรูปแบบ multipart/form data ต้องกำหนดเป็น Class
 
       // ใส่ข้อมูลเข้าไปใน formData
-      if (profileImage) formData.append("profileImage", file);
-      else if (coverImage) formData.append("coverImage", file);
+      if (profileImage !== undefined) formData.append("profileImage", file);
+      else if (coverImage !== undefined) formData.append("coverImage", file);
 
       await updateUser(formData);
       toast.success("success upload");
@@ -44,7 +44,6 @@ function ProfileImageForm({ title, profileImage, coverImage, onSuccess }) {
           className="d-none"
           ref={inputEl}
           onChange={(ev) => {
-            console.log(ev.target.files[0]);
             if (ev.target.files[0]) setFile(ev.target.files[0]); // กำหนดเพื่อว่าเวลากดเลือกรูป หากไม่เลือก(Cancel) ตัว ev.target.files[0] มันจะเป็น undefined ทำให้ค่าใน State เปลี่ยน ซึ่งมันไม่ควรเปลี่ยนมันควรจะเป็นค่าเดิม
           }}
         />
