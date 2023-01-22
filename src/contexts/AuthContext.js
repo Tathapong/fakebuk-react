@@ -10,7 +10,6 @@ const AuthContext = createContext();
 function AuthContextProvider({ children }) {
   const [user, setUser] = useState(null);
   const [initialLoading, setInitialLoading] = useState(true);
-  const navigate = useNavigate();
 
   // Use effect สำหรับ เรียกข้อมูล User แต่ถ้าไม่มี Token ก็ไม่ต้องทำ
   useEffect(() => {
@@ -39,6 +38,7 @@ function AuthContextProvider({ children }) {
 
   const login = async (input) => {
     const res = await authService.login(input);
+    console.log(res.data.token);
     addAccesToken(res.data.token);
     await getMe();
   };

@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import Avatar from "../../components/ui/Avatar";
 import CoverImage from "../../components/ui/CoverImage";
 import { useAuth } from "../../contexts/AuthContext";

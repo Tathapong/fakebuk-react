@@ -32,6 +32,7 @@ axios.interceptors.response.use(
       removeAccesToken();
       window.location.replace("/");
     }
+
     return Promise.reject(err);
   }
 );

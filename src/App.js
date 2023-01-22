@@ -5,7 +5,6 @@ import Spinner from "./components/ui/Spinner";
 
 function App() {
   const { loading } = useLoading();
-
   return (
     <>
       {loading && <Spinner />}

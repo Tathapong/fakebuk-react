@@ -12,7 +12,7 @@ function ProfileEdit() {
 
   return (
     <>
-      <button className="btn btn-gray-200" onClick={() => setIsOpen(true)}>
+      <button className="btn btn-secondary" onClick={() => setIsOpen(true)}>
         <i className="fa-solid fa-pen" /> Edit Profile
       </button>
       <Modal title="Edit profile" open={isOpen} onClose={() => setIsOpen(false)}>
