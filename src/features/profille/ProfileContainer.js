@@ -42,6 +42,16 @@ function ProfileContainer() {
     fetchUserFriends();
   }, [id, currentUser]);
 
+  const changeStatusWithMe = (nextStatus) => setStatusWithMe(nextStatus);
+  const deleteFriend = () => {
+    const nextFriend = friends.filter((item) => item.id !== currentUser.id);
+    setFriends(nextFriend);
+  };
+
+  const createFriend = () => {
+    setFriends([...friends, currentUser]);
+  };
+
   if (!statusWithMe) return <Spinner />; // เพิ่มเข้าไปเอง เพื่อไม่ให้มันกระพริบเป็นค่าอื่น ก่อน Render
 
   return (
@@ -56,6 +66,9 @@ function ProfileContainer() {
           isAnnonymous={statusWithMe === FRIEND_STATUS_ANNONYMOUS}
           isAccepter={statusWithMe === FRIEND_STATUS_ACCEPTER}
           isRequester={statusWithMe === FRIEND_STATUS_REQUESTER}
+          changeStatusWithMe={changeStatusWithMe}
+          deleteFriend={deleteFriend}
+          createFriend={createFriend}
         />
       </div>
     </>

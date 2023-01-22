@@ -1,5 +1,4 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import * as authService from "../api/authApi";
 import * as userService from "../api/userApi";
 import { addAccesToken, getAccesToken, removeAccesToken } from "../utilities/localstorage";
