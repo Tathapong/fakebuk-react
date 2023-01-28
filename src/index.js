@@ -11,15 +11,20 @@ import "@fortawesome/fontawesome-free/css/all.css";
 import "bootstrap";
 import "react-toastify/dist/ReactToastify.css";
 
+import { Provider } from "react-redux";
+import store from "./stores/index";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // <React.StrictMode>
   <BrowserRouter>
-    <LoadingContextProvider>
-      <AuthContextProvider>
-        <App />
-      </AuthContextProvider>
-    </LoadingContextProvider>
+    <Provider store={store}>
+      <LoadingContextProvider>
+        <AuthContextProvider>
+          <App />
+        </AuthContextProvider>
+      </LoadingContextProvider>
+    </Provider>
   </BrowserRouter>
   // </React.StrictMode>
 );

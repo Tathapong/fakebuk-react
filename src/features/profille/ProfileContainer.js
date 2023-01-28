@@ -1,9 +1,12 @@
 import ProfileCover from "../profille/ProfileCover";
 import ProfileInfo from "./ProfileInfo";
+import PostList from "../post/PostList";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useLoading } from "../../contexts/LoadingContext";
 import * as userService from "../../api/userApi";
+import * as postService from "../../api/postApi";
+import * as likeService from "../../api/likeApi";
 import { toast } from "react-toastify";
 import {
   FRIEND_STATUS_ACCEPTER,
@@ -14,6 +17,7 @@ import {
 } from "../../config/constants";
 import Spinner from "../../components/ui/Spinner";
 import { useAuth } from "../../contexts/AuthContext";
+import PostContainer from "../post/PostContainer";
 
 function ProfileContainer() {
   const { id } = useParams();
@@ -22,16 +26,19 @@ function ProfileContainer() {
   const [user, setUser] = useState({});
   const [friends, setFriends] = useState([]);
   const [statusWithMe, setStatusWithMe] = useState("");
+  const [posts, setPosts] = useState([]);
   const { user: currentUser } = useAuth();
 
   useEffect(() => {
     const fetchUserFriends = async () => {
       try {
         startLoading();
-        const res = await userService.getUserFriends(id);
-        setUser(res.data.user);
-        setFriends(res.data.friends);
-        setStatusWithMe(res.data.statusWithMe);
+        const resFriends = await userService.getUserFriends(id);
+        const resPosts = await postService.getUserPost("", id);
+        setUser(resFriends.data.user);
+        setFriends(resFriends.data.friends);
+        setStatusWithMe(resFriends.data.statusWithMe);
+        setPosts(resPosts.data.posts);
       } catch (err) {
         console.log(err);
         toast.error(err.response?.data.message);
@@ -52,6 +59,41 @@ function ProfileContainer() {
     setFriends([...friends, currentUser]);
   };
 
+  const updatePost = async (postId, input) => {
+    const res = await postService.updatePost(postId, input);
+    const newPosts = [...posts].map((item) => {
+      if (item.id === postId) {
+        item = res.data.post;
+      }
+      return item;
+    });
+
+    setPosts(newPosts);
+  };
+
+  const deletePost = async (postId) => {
+    await postService.deletePost(postId);
+    const newPosts = [...posts].filter((item) => item.id !== postId);
+    setPosts(newPosts);
+  };
+
+  const toggleLike = async (postId) => {
+    try {
+      const res = await likeService.toggleLike(postId);
+      const { like } = res.data;
+
+      const newPosts = [...posts]; // ไม่ใช่ Deep clone (Object ที่อยู่ข้างใน ยังเป็น allowcated ของ post อยู่)
+      const postIdx = newPosts.findIndex((item) => item.id === postId);
+
+      if (like) newPosts[postIdx].Likes?.push(like);
+      else newPosts[postIdx].Likes = newPosts[postIdx].Likes?.filter((item) => item.userId !== user.id);
+
+      setPosts(newPosts);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   if (!statusWithMe) return <Spinner />; // เพิ่มเข้าไปเอง เพื่อไม่ให้มันกระพริบเป็นค่าอื่น ก่อน Render
 
   return (
@@ -70,6 +112,11 @@ function ProfileContainer() {
           deleteFriend={deleteFriend}
           createFriend={createFriend}
         />
+      </div>
+      <div className="mx-auto py-4 max-w-152">
+        <div className="mx-2 d-flex flex-column gap-3">
+          <PostList posts={posts} toggleLike={toggleLike} updatePost={updatePost} deletePost={deletePost} />
+        </div>
       </div>
     </>
   );

@@ -10,7 +10,7 @@ function App() {
       {loading && <Spinner />}
       <div className="App">
         <Router />
-        <ToastContainer autoClose="2500" theme="colored" position="bottom-center" />
+        <ToastContainer autoClose="1500" theme="colored" position="bottom-center" hideProgressBar />
       </div>
     </>
   );

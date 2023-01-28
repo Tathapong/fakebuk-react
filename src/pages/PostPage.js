@@ -1,5 +1,6 @@
+import PostContainer from "../features/post/PostContainer";
 function PostPage() {
-  return <div>Post page</div>;
+  return <PostContainer />;
 }
 
 export default PostPage;
