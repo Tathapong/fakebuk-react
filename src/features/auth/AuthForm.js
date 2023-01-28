@@ -5,6 +5,7 @@ import Modal from "../../components/ui/Modal";
 
 function AuthForm() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+
   return (
     <div className="border border-1 shadow p-3 bg-white mx-auto rounded-lg max-w-99">
       <LoginForm />

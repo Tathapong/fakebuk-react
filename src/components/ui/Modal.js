@@ -1,20 +1,19 @@
 import { useRef, useEffect, useState } from "react";
 import { Modal as BsModal } from "bootstrap";
 
-function Modal({ title, children, open, onClose }) {
+function Modal(props) {
+  const { title, children, open, onClose } = props;
+
   const modalEl = useRef();
   const [modal, setModal] = useState(null);
 
   useEffect(() => {
-    const modalObj = new BsModal(modalEl.current);
-
-    setModal(modalObj);
+    setModal(new BsModal(modalEl.current));
   }, []);
 
   useEffect(() => {
     if (open) modal.show();
     else modal?.hide();
-    // ที่ต้องทำเป็น optional chaining เพราะว่าตอนแรกที่ render เมื่อมีการ setModal ที่ useEffect 1 มันยังไม่ได้อัพเดทค่าทันที จึงทำให้ค่า modal ใน useEffect 2 มีค่าเป็น null อยู่
   }, [open, modal]);
 
   return (
@@ -28,12 +27,10 @@ function Modal({ title, children, open, onClose }) {
       }}
     >
       <div className="modal-dialog modal-dialog-centered" onClick={(ev) => ev.stopPropagation()}>
-        {/* ev.stopPropagation() เป็นการยกเลิก Propagation การไม่ให้ปิด ถ้าคลิ๊กที่กล่อง modal  ลองไปหาศึกษาเพิ่ม */}
         <div className="modal-content">
           <div className="modal-header">
-            <button type="button" className="btn-close invisible"></button>
-            <h5 className="modal-title">{title}</h5>
-            <button type="button" className="btn-close" onClick={onClose}></button>
+            <h5 className="modal-title flex-fill">{title}</h5>
+            <button type="button" className="btn-close ms-0" onClick={onClose}></button>
           </div>
           <div className="modal-body">{children}</div>
         </div>
