@@ -21,9 +21,11 @@ function Modal(props) {
       className="modal fade"
       tabIndex="-1"
       ref={modalEl}
-      onClick={onClose}
+      onMouseDown={(ev) => {
+        if (ev.target === modalEl.current) onClose();
+      }}
       onKeyDown={(ev) => {
-        if (ev.which === 27) onClose();
+        if (ev.keyCode === 27) onClose();
       }}
     >
       <div className="modal-dialog modal-dialog-centered" onClick={(ev) => ev.stopPropagation()}>

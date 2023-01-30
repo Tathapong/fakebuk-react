@@ -1,10 +1,10 @@
 import Router from "./route/Router";
 import { ToastContainer } from "react-toastify";
-import { useLoading } from "./contexts/LoadingContext";
 import Spinner from "./components/ui/Spinner";
+import { useSelector } from "react-redux";
 
 function App() {
-  const { loading } = useLoading();
+  const loading = useSelector((state) => state.loading);
   return (
     <>
       {loading && <Spinner />}
