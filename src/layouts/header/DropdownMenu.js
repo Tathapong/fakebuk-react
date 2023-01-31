@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 import Avatar from "../../components/ui/Avatar";
-import { useAuth } from "../../contexts/AuthContext";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser, logout } from "../../stores/features/auth/userSlice";
 
 function DropdownMenu({ open, onClose }) {
-  const {
-    logout,
-    user: { id, profileImage, firstName, lastName }
-  } = useAuth();
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+  const { id, profileImage, firstName, lastName } = user;
 
   return (
     <ul className={`dropdown-menu  end-0 px-2 mt-1 border shadow-sm rounded-xl w-sm-90 ${open ? "d-block" : ""}`}>
@@ -30,7 +30,7 @@ function DropdownMenu({ open, onClose }) {
       <li>
         <button
           className="dropdown-item p-2 d-flex align-items-center gap-3 hover-bg-neutral-100 hover-rounded-lg"
-          onClick={logout}
+          onClick={() => dispatch(logout())}
         >
           <i className="fas fa-sign-out-alt rounded-circle p-2 text-black text-5 bg-gray-300" />
           <small className="text-black fw-bold">Log Out</small>

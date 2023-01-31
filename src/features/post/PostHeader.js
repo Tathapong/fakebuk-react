@@ -4,11 +4,14 @@ import { timeSince } from "../../utilities/dateFormat";
 import { useState, useCallback } from "react";
 import Modal from "../../components/ui/Modal";
 import PostForm from "./PostForm";
-import { useAuth } from "../../contexts/AuthContext";
 import DeleteConfirm from "./DeleteConfirm";
 import { useClickOutSide } from "../../hooks/useClickOutside";
+import { selectUser } from "../../stores/features/auth/userSlice";
+import { useSelector } from "react-redux";
 
 function PostHeader({ post, updatePost, deletePost }) {
+  const user = useSelector(selectUser);
+  const { id: userId } = user;
   const {
     createdAt: postCreatedAt,
     id: postId,
@@ -16,10 +19,6 @@ function PostHeader({ post, updatePost, deletePost }) {
   } = post;
   const closeDropdown = useCallback(() => setDropdownOpen(false), []);
   const dropdownEl = useClickOutSide(closeDropdown);
-
-  const {
-    user: { id: userId }
-  } = useAuth();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalEditIsOpen, setModalEditIsOpen] = useState(false);

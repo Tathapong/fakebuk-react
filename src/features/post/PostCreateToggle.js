@@ -4,14 +4,13 @@ import PostForm from "./PostForm";
 
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { useAuth } from "../../contexts/AuthContext";
+import { selectUser } from "../../stores/features/auth/userSlice";
+import { useSelector } from "react-redux";
 
 function PostCreateToggle({ createPost }) {
   const [isOpen, setIsOpen] = useState(false);
-
-  const {
-    user: { id, profileImage, firstName }
-  } = useAuth();
+  const user = useSelector(selectUser);
+  const { id, profileImage, firstName } = user;
 
   const savePost = async (input) => {
     await createPost(input);

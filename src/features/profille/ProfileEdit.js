@@ -2,13 +2,13 @@ import Modal from "../../components/ui/Modal";
 import { useState } from "react";
 
 import ImageForm from "./ImageForm";
-import { useAuth } from "../../contexts/AuthContext";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../stores/features/auth/userSlice";
 
 function ProfileEdit() {
   const [isOpen, setIsOpen] = useState(false);
-  const {
-    user: { profileImage, coverImage }
-  } = useAuth();
+  const user = useSelector(selectUser);
+  const { profileImage, coverImage } = user;
 
   return (
     <>

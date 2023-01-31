@@ -1,15 +1,15 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { login } from "../../stores/features/auth/userSlice";
 import { toast } from "react-toastify";
-import { useAuth } from "../../contexts/AuthContext";
-import { useLoading } from "../../contexts/LoadingContext";
 
 function LoginForm() {
+  const dispatch = useDispatch();
+
   const [input, setInput] = useState({
     emailOrMobile: "",
     password: ""
   });
-  const { startLoading, stopLoading } = useLoading();
-  const { login } = useAuth();
 
   const handleChangeInput = (ev) => {
     setInput({ ...input, [ev.target.name]: ev.target.value });
@@ -17,15 +17,12 @@ function LoginForm() {
 
   const handleSubmitForm = async (ev) => {
     ev.preventDefault();
-
     try {
-      startLoading();
-      await login(input);
+      await dispatch(login(input));
       toast.success("success login");
     } catch (err) {
-      toast.error(err.response.data.message);
+      toast.error(err.message);
     } finally {
-      stopLoading();
     }
   };
 

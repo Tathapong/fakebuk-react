@@ -4,7 +4,8 @@ import ProfileEdit from "./ProfileEdit";
 
 import { toast } from "react-toastify";
 import * as friendService from "../../api/friendApi";
-import { useLoading } from "../../contexts/LoadingContext";
+import { useDispatch } from "react-redux";
+import { actions as loadingActions } from "../../stores/loadingSlice";
 import { FRIEND_STATUS_ANNONYMOUS, FRIEND_STATUS_FRIEND, FRIEND_STATUS_REQUESTER } from "../../config/constants";
 
 function ProfileInfo({
@@ -19,11 +20,10 @@ function ProfileInfo({
   deleteFriend,
   createFriend
 }) {
-  const { startLoading, stopLoading } = useLoading();
-
+  const dispatch = useDispatch();
   const handleClickDelete = async () => {
     try {
-      startLoading();
+      dispatch(loadingActions.startLoading());
       await friendService.deleteFriend(user.id);
       changeStatusWithMe(FRIEND_STATUS_ANNONYMOUS);
 
@@ -33,13 +33,13 @@ function ProfileInfo({
       console.log(err);
       toast.error(err.response?.data.message);
     } finally {
-      stopLoading();
+      dispatch(loadingActions.stopLoading());
     }
   };
 
   const handleClickAdd = async () => {
     try {
-      startLoading();
+      dispatch(loadingActions.startLoading());
       await friendService.addFriend(user.id);
       changeStatusWithMe(FRIEND_STATUS_REQUESTER);
       toast.success("success ad Friend");
@@ -47,13 +47,13 @@ function ProfileInfo({
       console.log(err);
       toast.error(err.response?.data.message);
     } finally {
-      stopLoading();
+      dispatch(loadingActions.stopLoading());
     }
   };
 
   const handleClickAccept = async () => {
     try {
-      startLoading();
+      dispatch(loadingActions.startLoading());
       await friendService.acceptFriend(user.id);
       changeStatusWithMe(FRIEND_STATUS_FRIEND);
       createFriend();
@@ -62,7 +62,7 @@ function ProfileInfo({
       console.log(err);
       toast.error(err.response?.data.message);
     } finally {
-      stopLoading();
+      dispatch(loadingActions.stopLoading());
     }
   };
 

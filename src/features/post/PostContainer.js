@@ -1,28 +1,29 @@
 import PostCreateToggle from "./PostCreateToggle";
 import PostList from "./PostList";
 import { useState, useEffect } from "react";
-import { useLoading } from "../../contexts/LoadingContext";
-import { useAuth } from "../../contexts/AuthContext";
 import * as postService from "../../api/postApi";
 import * as likeService from "../../api/likeApi";
 import * as commentService from "../../api/commentApi";
+import { selectUser } from "../../stores/features/auth/userSlice";
+import { actions as loadingActions } from "../../stores/loadingSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 function PostContainer() {
+  const dispatch = useDispatch();
   const [posts, setPosts] = useState([]);
-  const { startLoading, stopLoading } = useLoading();
 
-  const { user } = useAuth();
+  const user = useSelector(selectUser);
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        startLoading();
+        dispatch(loadingActions.startLoading());
         const res = await postService.getUserPost("friend", user.id);
         setPosts(res.data.posts);
       } catch (err) {
         console.log(err);
       } finally {
-        stopLoading();
+        dispatch(loadingActions.stopLoading());
       }
     };
     fetchPost();

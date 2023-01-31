@@ -11,3 +11,4 @@ const loadingSlice = createSlice({
 
 export default loadingSlice.reducer;
 export const actions = loadingSlice.actions;
+export const selectLoading = (state) => state.loading;

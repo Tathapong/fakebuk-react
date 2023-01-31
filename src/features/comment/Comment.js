@@ -6,6 +6,8 @@ import Modal from "../../components/ui/Modal";
 import DeleteConfirm from "../post/DeleteConfirm";
 import { useAuth } from "../../contexts/AuthContext";
 import { useClickOutSide } from "../../hooks/useClickOutside";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../stores/features/auth/userSlice";
 
 function Comment({
   comment: {
@@ -18,9 +20,9 @@ function Comment({
   updateComment,
   deleteComment
 }) {
-  const {
-    user: { id: currentId }
-  } = useAuth();
+  const user = useSelector(selectUser);
+  const { id: currentId } = user;
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalDeleteIsOpen, setModalDeleteIsOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);

@@ -1,13 +1,15 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectUser } from "../stores/features/auth/userSlice";
+
 import LoginPage from "../pages/LoginPage";
 import PostPage from "../pages/PostPage";
 import FriendPage from "../pages/FriendPage";
 import ProfilePage from "../pages/ProfilePage";
 import AuthLayout from "../layouts/auth/AuthLayout";
-import { useAuth } from "../contexts/AuthContext";
 
 function Router() {
-  const { user } = useAuth();
+  const user = useSelector(selectUser);
 
   return (
     <Routes>

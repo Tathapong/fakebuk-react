@@ -1,29 +1,28 @@
 import { useRef, useState } from "react";
 import Avatar from "../../components/ui/Avatar";
 import CoverImage from "../../components/ui/CoverImage";
-import { useAuth } from "../../contexts/AuthContext";
-import { useLoading } from "../../contexts/LoadingContext";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { updateUser } from "../../stores/features/auth/userSlice";
+import { actions as loadingActions } from "../../stores/loadingSlice";
 
 function ProfileImageForm({ title, profileImage, coverImage, onSuccess }) {
+  const dispatch = useDispatch();
   const [file, setFile] = useState(null);
 
   const inputEl = useRef();
 
-  const { updateUser } = useAuth();
-  const { startLoading, stopLoading } = useLoading();
-
   const handleClickInputUpload = () => inputEl.current.click();
   const handelClickSave = async () => {
     try {
-      startLoading();
+      dispatch(loadingActions.startLoading());
       const formData = new FormData(); // ส่งข้อมูลในรูปแบบ multipart/form data ต้องกำหนดเป็น Class
 
       // ใส่ข้อมูลเข้าไปใน formData
       if (profileImage !== undefined) formData.append("profileImage", file);
       else if (coverImage !== undefined) formData.append("coverImage", file);
 
-      await updateUser(formData);
+      dispatch(updateUser(formData));
       toast.success("success upload");
       setFile(null);
       onSuccess();
@@ -31,7 +30,7 @@ function ProfileImageForm({ title, profileImage, coverImage, onSuccess }) {
       console.log(err);
       toast.error(err.response?.data.message);
     } finally {
-      stopLoading();
+      dispatch(loadingActions.stopLoading());
     }
   };
 

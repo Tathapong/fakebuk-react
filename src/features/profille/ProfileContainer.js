@@ -3,7 +3,6 @@ import ProfileInfo from "./ProfileInfo";
 import PostList from "../post/PostList";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { useLoading } from "../../contexts/LoadingContext";
 import * as userService from "../../api/userApi";
 import * as postService from "../../api/postApi";
 import * as likeService from "../../api/likeApi";
@@ -16,23 +15,24 @@ import {
   FRIEND_STATUS_REQUESTER
 } from "../../config/constants";
 import Spinner from "../../components/ui/Spinner";
-import { useAuth } from "../../contexts/AuthContext";
-import PostContainer from "../post/PostContainer";
+import { selectUser } from "../../stores/features/auth/userSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { actions as loadingActions } from "../../stores/loadingSlice";
 
 function ProfileContainer() {
+  const dispatch = useDispatch();
   const { id } = useParams();
-  const { startLoading, stopLoading } = useLoading();
 
   const [user, setUser] = useState({});
   const [friends, setFriends] = useState([]);
   const [statusWithMe, setStatusWithMe] = useState("");
   const [posts, setPosts] = useState([]);
-  const { user: currentUser } = useAuth();
+  const currentUser = useSelector(selectUser());
 
   useEffect(() => {
     const fetchUserFriends = async () => {
       try {
-        startLoading();
+        dispatch(loadingActions.startLoading());
         const resFriends = await userService.getUserFriends(id);
         const resPosts = await postService.getUserPost("", id);
         setUser(resFriends.data.user);
@@ -43,7 +43,7 @@ function ProfileContainer() {
         console.log(err);
         toast.error(err.response?.data.message);
       } finally {
-        stopLoading();
+        dispatch(loadingActions.stopLoading());
       }
     };
     fetchUserFriends();

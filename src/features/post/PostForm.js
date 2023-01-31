@@ -1,15 +1,15 @@
 import { useState, useRef, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { actions as loadingActions } from "../../stores/loadingSlice";
 import { toast } from "react-toastify";
-import { useLoading } from "../../contexts/LoadingContext";
 
 import AddPhotoButton from "./AddPhotoButton";
 
 function PostForm({ firstName, onSubmit, onClose, post, isOpen }) {
+  const dispatch = useDispatch();
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const fileEl = useRef();
-
-  const { startLoading, stopLoading } = useLoading();
 
   useEffect(() => {
     setTimeout(() => {
@@ -26,7 +26,7 @@ function PostForm({ firstName, onSubmit, onClose, post, isOpen }) {
   const handleSubmit = async (ev) => {
     try {
       ev.preventDefault();
-      startLoading();
+      dispatch(loadingActions.startLoading());
       const formData = new FormData();
 
       // Validate
@@ -47,7 +47,7 @@ function PostForm({ firstName, onSubmit, onClose, post, isOpen }) {
       console.log(err);
       toast.error(err.response?.data.message);
     } finally {
-      stopLoading();
+      dispatch(loadingActions.stopLoading());
     }
   };
 

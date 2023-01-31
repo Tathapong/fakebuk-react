@@ -4,23 +4,9 @@ import DropdownMenu from "./DropdownMenu";
 import { useClickOutSide } from "../../hooks/useClickOutside";
 
 function ProfileIcon() {
-  // State for toggle Dropdown
   const [isOpen, setIsOpen] = useState(false);
   const closeDropdown = useCallback(() => setIsOpen(false), []);
   const dropdownEl = useClickOutSide(closeDropdown);
-
-  // Use effect เพิ่ม addEventListener ใน root document
-  // useEffect(() => {
-  //   const handleClickOutside = (ev) => {
-  // Check ว่า ev.target ที่ Click อยู่ เป็น descendant ของ Component dropdownEl ไหม (จะพิจารณาอันที่ไม่อยู่)
-  //   if (!dropdownEl.current.contains(ev.target)) setIsOpen(false);
-  // };
-
-  // document.addEventListener("mousedown", handleClickOutside);
-
-  // เป็นคำสั่งในการ Remove eventListener เมื่อ ProfileIcon ไม่ได้ถูก render (เมื่อ Logout Header ก็จะไม่มี แต่ถ้าเราไม่สั่ง remove event มันจะยังคงอยู่ ซึ่งมันไม่ Clean)
-  //   return () => document.removeEventListener("mousedown", handleClickOutside);
-  // }, []);
 
   return (
     <div className="d-flex justify-content-end flex-1">

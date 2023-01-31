@@ -1,16 +1,16 @@
 import { Link } from "react-router-dom";
 import Avatar from "../../components/ui/Avatar";
-import { useAuth } from "../../contexts/AuthContext";
 import { useRef, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../stores/features/auth/userSlice";
 
 function CommentForm({ isCommentOpen, createComment, post }) {
   const inputEl = useRef();
 
   const { id: postId } = post;
 
-  const {
-    user: { profileImage, id }
-  } = useAuth();
+  const user = useSelector(selectUser);
+  const { profileImage, id } = user;
 
   const handleKeyUpEnter = async (ev) => {
     try {

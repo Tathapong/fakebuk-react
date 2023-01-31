@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { useAuth } from "../../contexts/AuthContext";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../stores/features/auth/userSlice";
 
 function PostAction({ post, toggleLike, toggleComment }) {
   const { Likes: likes, id: postId } = post;
-
-  const {
-    user: { id }
-  } = useAuth();
+  const user = useSelector(selectUser);
+  const { id } = user;
 
   const [isUserLiked, setIsUserLiked] = useState(Boolean(likes.find((item) => item.userId === id)));
 

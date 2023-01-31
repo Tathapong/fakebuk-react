@@ -1,18 +1,13 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
-import { useAuth } from "../../contexts/AuthContext";
-import { validateRegister } from "../../validations/userValidate";
 import { useDispatch } from "react-redux";
-import { actions as actionLoading } from "../../stores/loadingSlice";
-import { thunk_register } from "../../stores/features/auth/userSlice";
+import { register } from "../../stores/features/auth/userSlice";
+import { toast } from "react-toastify";
+import { validateRegister } from "../../validations/userValidate";
 
 function RegisterForm(props) {
-  // ใช้ Custom hook
-  const { register } = useAuth();
   const { onSuccess } = props;
 
   const dispatch = useDispatch(); ///+redux
-
   const [input, setInput] = useState({
     firstName: "",
     lastName: "",
@@ -25,19 +20,17 @@ function RegisterForm(props) {
 
   const handleSubmitForm = async (ev) => {
     ev.preventDefault();
+
     const { error } = validateRegister(input);
     if (error) return toast.error(error.message);
 
     try {
-      dispatch(actionLoading.startLoading()); ///+redux
-      await register(input);
-
+      await dispatch(register(input));
       toast.success("success register");
       onSuccess();
     } catch (err) {
-      toast.error(err.response.data.message);
+      toast.error(err.message);
     } finally {
-      dispatch(actionLoading.stopLoading()); ///+redux
     }
   };
 

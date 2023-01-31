@@ -5,7 +5,6 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import AuthContextProvider from "./contexts/AuthContext";
-import LoadingContextProvider from "./contexts/LoadingContext";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.css";
 import "bootstrap";
@@ -19,11 +18,9 @@ root.render(
   // <React.StrictMode>
   <BrowserRouter>
     <Provider store={store}>
-      <LoadingContextProvider>
-        <AuthContextProvider>
-          <App />
-        </AuthContextProvider>
-      </LoadingContextProvider>
+      <AuthContextProvider>
+        <App />
+      </AuthContextProvider>
     </Provider>
   </BrowserRouter>
   // </React.StrictMode>
