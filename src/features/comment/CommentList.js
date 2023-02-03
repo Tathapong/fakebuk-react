@@ -1,13 +1,15 @@
 import Comment from "./Comment";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-function CommentList({ post: { Comments: comments, id: postId }, updateComment, deleteComment }) {
+function CommentList({ post }) {
+  const { Comments: comments, id: postId } = post;
   const max = 3;
   const [maxComment, setMaxComment] = useState(max);
   const [isOpen, setIsOpen] = useState(true);
 
+  const orderedComments = Array.from(comments).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
   const toggleComment = () => {
-    setMaxComment(comments.length);
+    setMaxComment(orderedComments.length);
     setIsOpen(false);
   };
 
@@ -15,27 +17,12 @@ function CommentList({ post: { Comments: comments, id: postId }, updateComment, 
     <>
       <div className="pt-1">
         <small className="text-muted hover-underline" role="button" onClick={toggleComment}>
-          {isOpen ? comments.length > max && `View ${comments.length - max} previous comments` : ""}
+          {isOpen ? orderedComments?.length > max && `View ${orderedComments.length - max} previous comments` : ""}
         </small>
       </div>
-      {comments
-        .sort((a, b) => {
-          if (a.createdAt > b.createdAt) return 1;
-          if (a.createdAt === b.createdAt) return 0;
-          if (a.createdAt < b.createdAt) return -1;
-        })
-        .slice(-maxComment)
-        .map((item) => {
-          return (
-            <Comment
-              key={item.id}
-              comment={item}
-              updateComment={updateComment}
-              deleteComment={deleteComment}
-              postId={postId}
-            />
-          );
-        })}
+      {orderedComments.slice(-maxComment).map((item) => {
+        return <Comment key={item.id} comment={item} postId={postId} />;
+      })}
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { login } from "../../stores/features/auth/userSlice";
+import { thunk_login } from "../../stores/features/auth/usersSlice";
 import { toast } from "react-toastify";
 
 function LoginForm() {
@@ -18,9 +18,10 @@ function LoginForm() {
   const handleSubmitForm = async (ev) => {
     ev.preventDefault();
     try {
-      await dispatch(login(input));
+      await dispatch(thunk_login(input));
       toast.success("success login");
     } catch (err) {
+      console.log(err.message);
       toast.error(err.message);
     } finally {
     }

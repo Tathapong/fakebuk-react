@@ -3,7 +3,7 @@ import Avatar from "../../components/ui/Avatar";
 import CoverImage from "../../components/ui/CoverImage";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import { updateUser } from "../../stores/features/auth/userSlice";
+import { thunk_updateUser } from "../../stores/features/auth/usersSlice";
 import { actions as loadingActions } from "../../stores/loadingSlice";
 
 function ProfileImageForm({ title, profileImage, coverImage, onSuccess }) {
@@ -22,7 +22,7 @@ function ProfileImageForm({ title, profileImage, coverImage, onSuccess }) {
       if (profileImage !== undefined) formData.append("profileImage", file);
       else if (coverImage !== undefined) formData.append("coverImage", file);
 
-      dispatch(updateUser(formData));
+      dispatch(thunk_updateUser(formData));
       toast.success("success upload");
       setFile(null);
       onSuccess();

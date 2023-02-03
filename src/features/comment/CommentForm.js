@@ -1,15 +1,18 @@
 import { Link } from "react-router-dom";
 import Avatar from "../../components/ui/Avatar";
 import { useRef, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { selectUser } from "../../stores/features/auth/userSlice";
 
-function CommentForm({ isCommentOpen, createComment, post }) {
+import { useSelector, useDispatch } from "react-redux";
+import { selectMe } from "../../stores/features/auth/usersSlice";
+import { thunk_createComment } from "../../stores/features/posts/postSlice";
+
+function CommentForm({ isCommentOpen, post }) {
+  const dispatch = useDispatch();
   const inputEl = useRef();
 
   const { id: postId } = post;
 
-  const user = useSelector(selectUser);
+  const user = useSelector(selectMe);
   const { profileImage, id } = user;
 
   const handleKeyUpEnter = async (ev) => {
@@ -18,13 +21,13 @@ function CommentForm({ isCommentOpen, createComment, post }) {
         const input = inputEl.current.value;
         if (input.trim()) {
           const title = input.trim();
-          await createComment(postId, { title });
+          await dispatch(thunk_createComment(postId, { title }));
           inputEl.current.value = "";
         }
       }
       if (ev.keyCode === 27) inputEl.current.value = "";
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     } finally {
     }
   };

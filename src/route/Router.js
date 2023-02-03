@@ -1,31 +1,37 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectUser } from "../stores/features/auth/userSlice";
+import { selectMe } from "../stores/features/auth/usersSlice";
+import { selectLoading } from "../stores/loadingSlice";
 
 import LoginPage from "../pages/LoginPage";
 import PostPage from "../pages/PostPage";
 import FriendPage from "../pages/FriendPage";
 import ProfilePage from "../pages/ProfilePage";
 import AuthLayout from "../layouts/auth/AuthLayout";
+import Spinner from "../components/ui/Spinner";
 
 function Router() {
-  const user = useSelector(selectUser);
-
+  const user = useSelector(selectMe);
+  const loading = useSelector(selectLoading);
   return (
-    <Routes>
-      {user ? (
-        <Route path="/" element={<AuthLayout />}>
-          <Route path="/" element={<PostPage />}></Route>
-          <Route path="/friend" element={<FriendPage />}></Route>
-          <Route path="/profile/:id" element={<ProfilePage />}></Route>
-        </Route>
-      ) : (
-        <>
-          <Route path="/" element={<LoginPage />}></Route>
-        </>
-      )}
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
+    <>
+      {loading && <Spinner />}
+      <Routes>
+        {user ? (
+          <Route path="/" element={<AuthLayout />}>
+            <Route path="/" element={<PostPage />}></Route>
+            <Route path="/friend" element={<FriendPage />}></Route>
+            <Route path="/profile/:id" element={<ProfilePage />}></Route>
+          </Route>
+        ) : (
+          <>
+            <Route path="/" element={<LoginPage />}></Route>
+          </>
+        )}
+
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </>
   );
 }
 

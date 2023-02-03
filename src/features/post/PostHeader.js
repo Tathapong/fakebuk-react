@@ -1,16 +1,20 @@
-import { Link } from "react-router-dom";
 import Avatar from "../../components/ui/Avatar";
-import { timeSince } from "../../utilities/dateFormat";
-import { useState, useCallback } from "react";
 import Modal from "../../components/ui/Modal";
 import PostForm from "./PostForm";
 import DeleteConfirm from "./DeleteConfirm";
-import { useClickOutSide } from "../../hooks/useClickOutside";
-import { selectUser } from "../../stores/features/auth/userSlice";
-import { useSelector } from "react-redux";
 
-function PostHeader({ post, updatePost, deletePost }) {
-  const user = useSelector(selectUser);
+import { Link } from "react-router-dom";
+import { timeSince } from "../../utilities/dateFormat";
+import { useState, useCallback } from "react";
+import { useClickOutSide } from "../../hooks/useClickOutside";
+import { selectMe } from "../../stores/features/auth/usersSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { thunk_updatePost, thunk_deletePost } from "../../stores/features/posts/postSlice";
+
+function PostHeader({ post }) {
+  const dispatch = useDispatch();
+
+  const user = useSelector(selectMe);
   const { id: userId } = user;
   const {
     createdAt: postCreatedAt,
@@ -24,9 +28,9 @@ function PostHeader({ post, updatePost, deletePost }) {
   const [modalEditIsOpen, setModalEditIsOpen] = useState(false);
   const [modalDeleteIsOpen, setModalDeleteIsOpen] = useState(false);
 
-  const toggleDropdown = () => {
-    setDropdownOpen((dropdownOpen) => !dropdownOpen);
-  };
+  const toggleDropdown = () => setDropdownOpen((dropdownOpen) => !dropdownOpen);
+  const closeModalEdit = () => setModalEditIsOpen(false);
+  const closeModalDelete = () => setModalDeleteIsOpen(false);
 
   const handleClickEdit = () => {
     setModalEditIsOpen(true);
@@ -38,14 +42,8 @@ function PostHeader({ post, updatePost, deletePost }) {
     setDropdownOpen(false);
   };
 
-  const onSubmitUpdatePost = async (input) => {
-    await updatePost(postId, input);
-  };
-
-  const onSubmitDeletePost = async () => {
-    setModalDeleteIsOpen(false);
-    setTimeout(async () => await deletePost(postId), 400);
-  };
+  const onSubmitUpdatePost = async (input) => await dispatch(thunk_updatePost(postId, input));
+  const onSubmitDeletePost = async () => await dispatch(thunk_deletePost(postId));
 
   return (
     <div className="d-flex align-items-center gap-2">
@@ -71,18 +69,18 @@ function PostHeader({ post, updatePost, deletePost }) {
               Delete
             </button>
           </div>
-          <Modal title="Edit Post" open={modalEditIsOpen} onClose={() => setModalEditIsOpen(false)}>
+          <Modal title="Edit Post" open={modalEditIsOpen} onClose={closeModalEdit}>
             <PostForm
               firstName={firstName}
               onSubmit={onSubmitUpdatePost}
-              onClose={() => setModalEditIsOpen(false)}
+              onClose={closeModalEdit}
               post={post}
               isOpen={modalEditIsOpen}
             />
           </Modal>
-          <Modal title="Delete confirm?" open={modalDeleteIsOpen} onClose={() => setModalDeleteIsOpen(false)}>
+          <Modal title="Delete confirm?" open={modalDeleteIsOpen} onClose={closeModalDelete}>
             <DeleteConfirm
-              onClose={() => setModalDeleteIsOpen(false)}
+              onClose={closeModalDelete}
               onSubmit={onSubmitDeletePost}
               title="Do you confirm to delete the Post?"
             />

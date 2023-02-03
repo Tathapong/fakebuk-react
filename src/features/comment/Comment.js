@@ -1,26 +1,25 @@
 import Avatar from "../../components/ui/Avatar";
+import Modal from "../../components/ui/Modal";
+import DeleteConfirm from "../post/DeleteConfirm";
+
 import { Link } from "react-router-dom";
 import { timeSince } from "../../utilities/dateFormat";
 import { useState, useCallback } from "react";
-import Modal from "../../components/ui/Modal";
-import DeleteConfirm from "../post/DeleteConfirm";
-import { useAuth } from "../../contexts/AuthContext";
 import { useClickOutSide } from "../../hooks/useClickOutside";
-import { useSelector } from "react-redux";
-import { selectUser } from "../../stores/features/auth/userSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { selectMe } from "../../stores/features/auth/usersSlice";
+import { thunk_deleteComment, thunk_updateComment } from "../../stores/features/posts/postSlice";
 
-function Comment({
-  comment: {
+function Comment({ comment, postId }) {
+  const {
     id: commentId,
     title,
     createdAt,
     User: { id: userId, firstName, lastName, profileImage }
-  },
-  postId,
-  updateComment,
-  deleteComment
-}) {
-  const user = useSelector(selectUser);
+  } = comment;
+
+  const dispatch = useDispatch();
+  const user = useSelector(selectMe);
   const { id: currentId } = user;
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -50,7 +49,7 @@ function Comment({
       }
       if (ev.keyCode === 13) {
         if (commentInput.trim()) {
-          await updateComment(postId, commentId, commentInput);
+          await dispatch(thunk_updateComment(postId, commentId, commentInput));
           setCommentInput(title);
           setIsEdit(false);
         }
@@ -63,7 +62,7 @@ function Comment({
   const handleClickDelete = async (ev) => {
     try {
       setModalDeleteIsOpen(false);
-      setTimeout(async () => await deleteComment(postId, commentId), 300);
+      await dispatch(thunk_deleteComment(postId, commentId));
     } catch (err) {
       console.log(err);
     } finally {

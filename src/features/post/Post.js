@@ -2,18 +2,12 @@ import PostHeader from "./PostHeader";
 import PostContent from "./PostContent";
 import PostFooter from "./PostFooter";
 
-function Post({ post, toggleLike, updatePost, deletePost, createComment, updateComment, deleteComment }) {
+function Post({ post }) {
   return (
     <div className="border bg-white shadow-sm px-3 rounded-lg tw-pt-3">
-      <PostHeader post={post} updatePost={updatePost} deletePost={deletePost} />
+      <PostHeader post={post} />
       <PostContent post={post} />
-      <PostFooter
-        post={post}
-        toggleLike={toggleLike}
-        createComment={createComment}
-        updateComment={updateComment}
-        deleteComment={deleteComment}
-      />
+      <PostFooter post={post} />
     </div>
   );
 }

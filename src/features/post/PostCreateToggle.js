@@ -4,16 +4,18 @@ import PostForm from "./PostForm";
 
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { selectUser } from "../../stores/features/auth/userSlice";
-import { useSelector } from "react-redux";
+import { selectMe } from "../../stores/features/auth/usersSlice";
+import { thunk_createPost } from "../../stores/features/posts/postSlice";
+import { useSelector, useDispatch } from "react-redux";
 
-function PostCreateToggle({ createPost }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const user = useSelector(selectUser);
+function PostCreateToggle() {
+  const dispatch = useDispatch();
+  const user = useSelector(selectMe);
   const { id, profileImage, firstName } = user;
+  const [isOpen, setIsOpen] = useState(false);
 
-  const savePost = async (input) => {
-    await createPost(input);
+  const createPost = async (input) => {
+    await dispatch(thunk_createPost(input));
   };
 
   return (
@@ -27,7 +29,7 @@ function PostCreateToggle({ createPost }) {
         </button>
       </div>
       <Modal title="Create Post" open={isOpen} onClose={() => setIsOpen(false)}>
-        <PostForm firstName={firstName} onSubmit={savePost} onClose={() => setIsOpen(false)} isOpen={isOpen} />
+        <PostForm firstName={firstName} onSubmit={createPost} onClose={() => setIsOpen(false)} isOpen={isOpen} />
       </Modal>
     </div>
   );

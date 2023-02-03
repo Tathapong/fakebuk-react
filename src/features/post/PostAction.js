@@ -1,13 +1,20 @@
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import { selectUser } from "../../stores/features/auth/userSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { selectIsUserLike, thunk_toggleLike } from "../../stores/features/posts/postSlice";
 
-function PostAction({ post, toggleLike, toggleComment }) {
-  const { Likes: likes, id: postId } = post;
-  const user = useSelector(selectUser);
-  const { id } = user;
+function PostAction({ post, toggleComment }) {
+  const dispatch = useDispatch();
+  const { id: postId } = post;
 
-  const [isUserLiked, setIsUserLiked] = useState(Boolean(likes.find((item) => item.userId === id)));
+  const isUserLiked = useSelector((state) => selectIsUserLike(state, postId));
+
+  const toggleLike = async () => {
+    try {
+      await dispatch(thunk_toggleLike(postId));
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+    }
+  };
 
   return (
     <div className="d-flex gap-1 py-1">
@@ -15,10 +22,7 @@ function PostAction({ post, toggleLike, toggleComment }) {
         className={`btn ${
           isUserLiked ? "text-primary" : "text-muted"
         } flex-1 d-flex align-items-center justify-content-center gap-2 hover-bg-gray-200`}
-        onClick={() => {
-          toggleLike(postId);
-          setIsUserLiked((isUserLiked) => !isUserLiked);
-        }}
+        onClick={toggleLike}
       >
         <i className="fa-regular fa-thumbs-up" />
         <small className="fw-bold">Like</small>

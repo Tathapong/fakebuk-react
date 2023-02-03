@@ -3,11 +3,11 @@ import { useState } from "react";
 
 import ImageForm from "./ImageForm";
 import { useSelector } from "react-redux";
-import { selectUser } from "../../stores/features/auth/userSlice";
+import { selectMe } from "../../stores/features/auth/usersSlice";
 
 function ProfileEdit() {
   const [isOpen, setIsOpen] = useState(false);
-  const user = useSelector(selectUser);
+  const user = useSelector(selectMe);
   const { profileImage, coverImage } = user;
 
   return (

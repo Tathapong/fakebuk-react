@@ -15,7 +15,7 @@ import {
   FRIEND_STATUS_REQUESTER
 } from "../../config/constants";
 import Spinner from "../../components/ui/Spinner";
-import { selectUser } from "../../stores/features/auth/userSlice";
+import { selectMe } from "../../stores/features/auth/usersSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { actions as loadingActions } from "../../stores/loadingSlice";
 
@@ -27,7 +27,7 @@ function ProfileContainer() {
   const [friends, setFriends] = useState([]);
   const [statusWithMe, setStatusWithMe] = useState("");
   const [posts, setPosts] = useState([]);
-  const currentUser = useSelector(selectUser());
+  const currentUser = useSelector(selectMe);
 
   useEffect(() => {
     const fetchUserFriends = async () => {

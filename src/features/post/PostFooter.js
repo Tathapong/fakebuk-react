@@ -3,26 +3,16 @@ import PostAction from "./PostAction";
 import CommentContainer from "../comment/CommentContainer";
 import { useState } from "react";
 
-function PostFooter({ post, toggleLike, createComment, updateComment, deleteComment }) {
+function PostFooter({ post }) {
   const [isCommentOpen, setIsCommentOpen] = useState(false);
+  const toggleComment = () => setIsCommentOpen((previous) => !previous);
+
   return (
     <>
-      <PostReaction post={post} toggleComment={() => setIsCommentOpen((isCommentOpen) => !isCommentOpen)} />
+      <PostReaction post={post} toggleComment={toggleComment} />
       <hr className="hr-sm my-0" />
-      <PostAction
-        post={post}
-        toggleLike={toggleLike}
-        toggleComment={() => setIsCommentOpen((isCommentOpen) => !isCommentOpen)}
-      />
-      {isCommentOpen && (
-        <CommentContainer
-          post={post}
-          isCommentOpen={isCommentOpen}
-          createComment={createComment}
-          updateComment={updateComment}
-          deleteComment={deleteComment}
-        />
-      )}
+      <PostAction post={post} toggleComment={toggleComment} />
+      {isCommentOpen && <CommentContainer post={post} isCommentOpen={isCommentOpen} />}
     </>
   );
 }

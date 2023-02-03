@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { register } from "../../stores/features/auth/userSlice";
+import { thunk_register } from "../../stores/features/auth/usersSlice";
 import { toast } from "react-toastify";
 import { validateRegister } from "../../validations/userValidate";
 
 function RegisterForm(props) {
   const { onSuccess } = props;
 
-  const dispatch = useDispatch(); ///+redux
+  const dispatch = useDispatch();
   const [input, setInput] = useState({
     firstName: "",
     lastName: "",
@@ -25,10 +25,11 @@ function RegisterForm(props) {
     if (error) return toast.error(error.message);
 
     try {
-      await dispatch(register(input));
+      await dispatch(thunk_register(input));
       toast.success("success register");
       onSuccess();
     } catch (err) {
+      console.log(err.message);
       toast.error(err.message);
     } finally {
     }

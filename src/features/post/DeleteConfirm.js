@@ -7,10 +7,13 @@ function DeleteConfirm({ onClose, onSubmit, title }) {
       await onSubmit();
       toast.success("delete completed");
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
       toast.err(err.message);
+    } finally {
+      onClose();
     }
   };
+
   return (
     <div>
       <p>{title}</p>
