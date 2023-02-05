@@ -1,9 +1,10 @@
-import { Link } from "react-router-dom";
 import Avatar from "../../components/ui/Avatar";
-import { useRef, useEffect } from "react";
 
+import { Link } from "react-router-dom";
+import { useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectMe } from "../../stores/features/auth/usersSlice";
+
+import { selectMe } from "../../stores/features/auth/myUserSlice";
 import { thunk_createComment } from "../../stores/features/posts/postSlice";
 
 function CommentForm({ isCommentOpen, post }) {
@@ -34,7 +35,7 @@ function CommentForm({ isCommentOpen, post }) {
 
   useEffect(() => {
     if (isCommentOpen) inputEl.current.focus();
-  }, []);
+  }, [isCommentOpen]);
 
   return (
     <div className="d-flex pt-1 gap-2">

@@ -8,13 +8,14 @@ function PostForm({ firstName, onSubmit, onClose, post, isOpen }) {
   const fileEl = useRef();
 
   useEffect(() => {
-    if (post?.title) setTitle(post.title);
-    else setTitle("");
-    if (post?.image) setImage(post.image);
-    else {
-      setImage(null);
+    const initial = () => {
+      if (post?.title) setTitle(post.title);
+      else setTitle("");
+      if (post?.image) setImage(post.image);
+      else setImage(null);
       fileEl.current.value = "";
-    }
+    };
+    setTimeout(() => initial(), 300);
   }, [isOpen, post?.image, post?.title]);
 
   const handleSubmit = async (ev) => {
@@ -33,8 +34,18 @@ function PostForm({ firstName, onSubmit, onClose, post, isOpen }) {
     } catch (err) {
       console.log(err.message);
       toast.error(err.message);
-    } finally {
     }
+  };
+
+  const onChangeTitle = (ev) => setTitle(ev.target.value);
+  const onClickInputFile = () => fileEl.current.click();
+  const onClickCloseImage = (ev) => {
+    ev.stopPropagation();
+    fileEl.current.value = "";
+    setImage(null);
+  };
+  const onChangeInputFIle = (ev) => {
+    if (ev.target.files[0]) setImage(ev.target.files[0]);
   };
 
   return (
@@ -44,19 +55,15 @@ function PostForm({ firstName, onSubmit, onClose, post, isOpen }) {
         placeholder={`What's on your mind, ${firstName}?`}
         rows="5"
         value={title}
-        onChange={(ev) => setTitle(ev.target.value)}
+        onChange={onChangeTitle}
       />
-      <div className="position-relative" role="button" onClick={() => fileEl.current.click()}>
+      <div className="position-relative" role="button" onClick={onClickInputFile}>
         {image ? (
           <>
             <i
               role="button"
               className="fa-solid fa-circle-xmark fs-3 text-light position-absolute end-0 me-2 mt-2"
-              onClick={(ev) => {
-                ev.stopPropagation();
-                fileEl.current.value = "";
-                setImage(null);
-              }}
+              onClick={onClickCloseImage}
             />
 
             <img src={post?.image === image ? image : URL.createObjectURL(image)} className="img-fluid" alt="post" />
@@ -66,14 +73,7 @@ function PostForm({ firstName, onSubmit, onClose, post, isOpen }) {
         )}
       </div>
 
-      <input
-        type="file"
-        className="d-none"
-        ref={fileEl}
-        onChange={(ev) => {
-          if (ev.target.files[0]) setImage(ev.target.files[0]);
-        }}
-      />
+      <input type="file" className="d-none" ref={fileEl} onChange={onChangeInputFIle} />
       <div className="pt-3">
         <button type="submit" className="btn btn-primary w-100 fw-bold text-3.5 h-9">
           Post

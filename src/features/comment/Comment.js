@@ -7,7 +7,7 @@ import { timeSince } from "../../utilities/dateFormat";
 import { useState, useCallback } from "react";
 import { useClickOutSide } from "../../hooks/useClickOutside";
 import { useSelector, useDispatch } from "react-redux";
-import { selectMe } from "../../stores/features/auth/usersSlice";
+import { selectMe } from "../../stores/features/auth/myUserSlice";
 import { thunk_deleteComment, thunk_updateComment } from "../../stores/features/posts/postSlice";
 
 function Comment({ comment, postId }) {
@@ -19,8 +19,8 @@ function Comment({ comment, postId }) {
   } = comment;
 
   const dispatch = useDispatch();
-  const user = useSelector(selectMe);
-  const { id: currentId } = user;
+  const myUser = useSelector(selectMe);
+  const { id: myUserId } = myUser;
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalDeleteIsOpen, setModalDeleteIsOpen] = useState(false);
@@ -55,16 +55,16 @@ function Comment({ comment, postId }) {
         }
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
   const handleClickDelete = async (ev) => {
     try {
+      setTimeout(async () => await dispatch(thunk_deleteComment(postId, commentId)), 1);
       setModalDeleteIsOpen(false);
-      await dispatch(thunk_deleteComment(postId, commentId));
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     } finally {
     }
   };
@@ -97,22 +97,21 @@ function Comment({ comment, postId }) {
                 <small style={{ fontSize: "11px" }} className="ms-3">
                   Press ESC or click
                   <span onClick={handleClickCancelEdit} role="button" className="text-primary">
-                    {" "}
-                    cancel
+                    <span className="ms-1">cancel</span>
                   </span>
                 </small>
               </div>
             ) : (
               <div className="d-flex flex-column align-items-start tw-py-2 tw-px-3 bg-gray-200 rounded-2xl">
-                <a href="/#" className="text-dark fw-bold no-underline hover-underline text-3">
+                <Link to={`/profile/${userId}`} className="text-dark fw-bold no-underline hover-underline text-3">
                   {`${firstName} ${lastName}`}
-                </a>
+                </Link>
                 <small>{title}</small>
               </div>
             )}
 
             <div className="dropdown" ref={dropdownEl}>
-              {!isEdit && currentId === userId && (
+              {!isEdit && myUserId === userId && (
                 <button
                   className="btn rounded-circle position-relative  h-8 w-8 hover-bg-gray-200"
                   onClick={toggleDropdown}

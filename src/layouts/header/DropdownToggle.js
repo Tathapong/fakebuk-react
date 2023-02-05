@@ -1,6 +1,6 @@
 import Avatar from "../../components/ui/Avatar";
 import { useSelector } from "react-redux";
-import { selectMe } from "../../stores/features/auth/usersSlice";
+import { selectMe } from "../../stores/features/auth/myUserSlice";
 function DropdownToggle({ onClick }) {
   const user = useSelector(selectMe);
   const { profileImage } = user;

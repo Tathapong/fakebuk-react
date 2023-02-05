@@ -12,7 +12,6 @@ function PostAction({ post, toggleComment }) {
       await dispatch(thunk_toggleLike(postId));
     } catch (err) {
       console.log(err.message);
-    } finally {
     }
   };
 

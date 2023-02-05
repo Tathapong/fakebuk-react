@@ -3,19 +3,18 @@ import * as authService from "../../../api/authApi";
 import * as userService from "../../../api/userApi";
 import { addAccesToken, removeAccesToken } from "../../../utilities/localstorage";
 import { actions as loadingActions } from "../../loadingSlice";
+import { thunk_getUserById } from "../users/userSlice";
 
 const initialState = null;
 
 const userSlice = createSlice({
-  name: "user",
+  name: "myUser",
   initialState,
   reducers: {
-    setUser: (state, action) => action.payload,
-    deleteUser: (state, action) => initialState
+    setMyUser: (state, action) => action.payload,
+    deleteMyUser: (state, action) => initialState
   }
 });
-
-//Thunk creator fucntion
 
 export const thunk_getMe =
   (isGetMe = true) =>
@@ -24,8 +23,8 @@ export const thunk_getMe =
       isGetMe && dispatch(loadingActions.startLoading());
       const res = await authService.getMe();
       const { user } = res.data;
-      if (isGetMe) dispatch(actions.setUser(user));
-      else setTimeout(() => dispatch(actions.setUser(user)), 1);
+      if (isGetMe) dispatch(actions.setMyUser(user));
+      else setTimeout(() => dispatch(actions.setMyUser(user)), 1);
     } catch (err) {
       if (isGetMe) throw err.response.data;
       else throw err;
@@ -34,9 +33,9 @@ export const thunk_getMe =
     }
   };
 
-export const thunk_register = (input) => async (dispatch) => {
+export const thunk_register = (input) => async (dispatch, getState) => {
   try {
-    dispatch(loadingActions.startLoading());
+    if (!getState().loading) dispatch(loadingActions.startLoading());
     const res = await authService.register(input);
     const { token } = res.data;
     addAccesToken(token);
@@ -44,43 +43,44 @@ export const thunk_register = (input) => async (dispatch) => {
   } catch (err) {
     throw err.response.data;
   } finally {
-    dispatch(loadingActions.stopLoading());
+    if (getState().loading) dispatch(loadingActions.stopLoading());
   }
 };
 
-export const thunk_login = (input) => async (dispatch) => {
+export const thunk_login = (input) => async (dispatch, getState) => {
   try {
-    dispatch(loadingActions.startLoading());
+    if (!getState().loading) dispatch(loadingActions.startLoading());
     const res = await authService.login(input);
     addAccesToken(res.data.token);
     await dispatch(thunk_getMe(false));
   } catch (err) {
     throw err.response.data;
   } finally {
-    dispatch(loadingActions.stopLoading());
+    if (getState().loading) dispatch(loadingActions.stopLoading());
   }
 };
 
 export const thunk_logout = () => (dispatch) => {
-  dispatch(actions.deleteUser());
+  dispatch(actions.deleteMyUser());
   removeAccesToken();
 };
 
-export const thunk_updateUser = (input) => async (dispatch) => {
+export const thunk_updateUser = (input) => async (dispatch, getState) => {
   try {
-    dispatch(loadingActions.startLoading());
+    if (!getState().loading) dispatch(loadingActions.startLoading());
     const res = await userService.updateUser(input);
     const { user } = res.data;
-    dispatch(actions.setUser(user));
+    dispatch(actions.setMyUser(user));
+    const myUserId = +getState().myUser.id;
+    await dispatch(thunk_getUserById(myUserId));
   } catch (err) {
-    throw err.response.datat;
+    throw err.response.data;
   } finally {
-    dispatch(loadingActions.stopLoading());
+    if (getState().loading) dispatch(loadingActions.stopLoading());
   }
 };
 
-// selector function
-export const selectMe = (state) => state.user;
+export const selectMe = (state) => state.myUser;
 
 export default userSlice.reducer;
 export const actions = userSlice.actions;

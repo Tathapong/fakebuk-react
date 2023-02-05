@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { thunk_register } from "../../stores/features/auth/usersSlice";
+import { thunk_register } from "../../stores/features/auth/myUserSlice";
 import { toast } from "react-toastify";
 import { validateRegister } from "../../validations/userValidate";
 

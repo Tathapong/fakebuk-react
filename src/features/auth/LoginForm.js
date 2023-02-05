@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { thunk_login } from "../../stores/features/auth/usersSlice";
+import { thunk_login } from "../../stores/features/auth/myUserSlice";
 import { toast } from "react-toastify";
 
 function LoginForm() {

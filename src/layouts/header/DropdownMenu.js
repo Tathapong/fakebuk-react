@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Avatar from "../../components/ui/Avatar";
 import { useDispatch, useSelector } from "react-redux";
-import { selectMe, thunk_logout } from "../../stores/features/auth/usersSlice";
+import { selectMe, thunk_logout } from "../../stores/features/auth/myUserSlice";
 
 function DropdownMenu({ open, onClose }) {
   const dispatch = useDispatch();

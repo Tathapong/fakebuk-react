@@ -2,69 +2,57 @@ import Avatar from "../../components/ui/Avatar";
 import AvatarGroup from "../../components/ui/AvatarGroup";
 import ProfileEdit from "./ProfileEdit";
 
-import { toast } from "react-toastify";
-import * as friendService from "../../api/friendApi";
-import { useDispatch } from "react-redux";
-import { actions as loadingActions } from "../../stores/loadingSlice";
-import { FRIEND_STATUS_ANNONYMOUS, FRIEND_STATUS_FRIEND, FRIEND_STATUS_REQUESTER } from "../../config/constants";
+import { useDispatch, useSelector } from "react-redux";
+import * as friendStatus from "../../config/constants";
+import {
+  thunk_deleteFriend,
+  selectUser,
+  selectStatusWithMe,
+  selectFriends,
+  thunk_addFriend,
+  thunk_acceptFriend
+} from "../../stores/features/users/userSlice";
 
-function ProfileInfo({
-  isMe,
-  user,
-  friends,
-  isFriend,
-  isAnnonymous,
-  isAccepter,
-  isRequester,
-  changeStatusWithMe,
-  deleteFriend,
-  createFriend
-}) {
+function ProfileInfo() {
   const dispatch = useDispatch();
+
+  const user = useSelector(selectUser);
+  const statusWithMe = useSelector(selectStatusWithMe);
+  const friends = useSelector(selectFriends);
+
+  const isMe = statusWithMe === friendStatus.FRIEND_STATUS_ME;
+  const isFriend = statusWithMe === friendStatus.FRIEND_STATUS_FRIEND;
+  const isAccepter = statusWithMe === friendStatus.FRIEND_STATUS_ACCEPTER;
+  const isRequester = statusWithMe === friendStatus.FRIEND_STATUS_REQUESTER;
+  const isAnnonymous = statusWithMe === friendStatus.FRIEND_STATUS_ANNONYMOUS;
+
   const handleClickDelete = async () => {
     try {
-      dispatch(loadingActions.startLoading());
-      await friendService.deleteFriend(user.id);
-      changeStatusWithMe(FRIEND_STATUS_ANNONYMOUS);
-
-      if (isFriend) deleteFriend();
-      toast.success("success delete");
+      await dispatch(thunk_deleteFriend(user.id));
     } catch (err) {
-      console.log(err);
-      toast.error(err.response?.data.message);
-    } finally {
-      dispatch(loadingActions.stopLoading());
+      console.log(err.message);
     }
   };
 
   const handleClickAdd = async () => {
     try {
-      dispatch(loadingActions.startLoading());
-      await friendService.addFriend(user.id);
-      changeStatusWithMe(FRIEND_STATUS_REQUESTER);
-      toast.success("success ad Friend");
+      await dispatch(thunk_addFriend(user.id));
     } catch (err) {
-      console.log(err);
-      toast.error(err.response?.data.message);
-    } finally {
-      dispatch(loadingActions.stopLoading());
+      console.log(err.message);
     }
   };
 
   const handleClickAccept = async () => {
     try {
-      dispatch(loadingActions.startLoading());
-      await friendService.acceptFriend(user.id);
-      changeStatusWithMe(FRIEND_STATUS_FRIEND);
-      createFriend();
-      toast.success("success accept friend");
+      await dispatch(thunk_acceptFriend(user.id));
     } catch (err) {
-      console.log(err);
-      toast.error(err.response?.data.message);
-    } finally {
-      dispatch(loadingActions.stopLoading());
+      console.log(err.message);
     }
   };
+
+  const dataAvatarGroup = friends.map((item) => {
+    return { ...item, to: "/profile/" + item.id };
+  });
 
   return (
     <div className="d-flex flex-column flex-md-row align-items-center align-items-md-stretch mx-auto px-3 space-x-4 max-w-266">
@@ -73,18 +61,9 @@ function ProfileInfo({
       </div>
 
       <div className="my-3 flex-grow-1 d-flex flex-column align-items-center d-md-block">
-        <h2 className="fw-bold mb-0">{`${user.firstName} ${user.lastName}`}</h2>
+        <h2 className="fw-bold mb-0">{`${user.firstName || ""} ${user.lastName || ""}`}</h2>
         <span className="d-inline-block text-muted py-1">{`${friends.length} Friends`}</span>
-        <AvatarGroup
-          data={friends.map((item) => {
-            item.to = `/profile/${item.id}`;
-            return item;
-          })}
-          size="32"
-          borderColor="white"
-          borderSize="2"
-          maxAvatar="5"
-        />
+        <AvatarGroup data={dataAvatarGroup} size="32" borderColor="white" borderSize="2" maxAvatar="5" />
       </div>
 
       <div className="mb-3 align-self-md-end">

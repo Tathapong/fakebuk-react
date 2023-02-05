@@ -3,21 +3,24 @@ import { useState } from "react";
 
 import ImageForm from "./ImageForm";
 import { useSelector } from "react-redux";
-import { selectMe } from "../../stores/features/auth/usersSlice";
+import { selectMe } from "../../stores/features/auth/myUserSlice";
 
 function ProfileEdit() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const user = useSelector(selectMe);
   const { profileImage, coverImage } = user;
 
+  const openEditModal = () => setModalIsOpen(true);
+  const closeEditModal = () => setModalIsOpen(false);
+
   return (
     <>
-      <button className="btn btn-secondary" onClick={() => setIsOpen(true)}>
+      <button className="btn btn-secondary" onClick={openEditModal}>
         <i className="fa-solid fa-pen" /> Edit Profile
       </button>
-      <Modal title="Edit profile" open={isOpen} onClose={() => setIsOpen(false)}>
-        <ImageForm title="Profile Picture" onSuccess={() => setIsOpen(false)} profileImage={profileImage} />
-        <ImageForm title="Cover Photo" onSuccess={() => setIsOpen(false)} coverImage={coverImage} />
+      <Modal title="Edit profile" open={modalIsOpen} onClose={closeEditModal}>
+        <ImageForm title="Profile Picture" open={modalIsOpen} onSuccess={closeEditModal} profileImage={profileImage} />
+        <ImageForm title="Cover Photo" open={modalIsOpen} onSuccess={closeEditModal} coverImage={coverImage} />
       </Modal>
     </>
   );

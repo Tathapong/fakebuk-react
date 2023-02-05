@@ -8,7 +8,8 @@ function Modal(props) {
   const [modal, setModal] = useState(null);
 
   useEffect(() => {
-    setModal(new BsModal(modalEl.current));
+    const modalObj = new BsModal(modalEl.current);
+    setModal(modalObj);
   }, []);
 
   useEffect(() => {
@@ -16,19 +17,25 @@ function Modal(props) {
     else modal?.hide();
   }, [open, modal]);
 
+  const mouseDownCloseModal = (ev) => {
+    if (ev.target === modalEl.current) onClose();
+  };
+
+  const onKeyDownCloseModal = (ev) => {
+    if (ev.keyCode === 27) onClose();
+  };
+
+  const propagationModal = (ev) => ev.stopPropagation();
+
   return (
     <div
       className="modal fade"
       tabIndex="-1"
       ref={modalEl}
-      onMouseDown={(ev) => {
-        if (ev.target === modalEl.current) onClose();
-      }}
-      onKeyDown={(ev) => {
-        if (ev.keyCode === 27) onClose();
-      }}
+      onMouseDown={mouseDownCloseModal}
+      onKeyDown={onKeyDownCloseModal}
     >
-      <div className="modal-dialog modal-dialog-centered" onClick={(ev) => ev.stopPropagation()}>
+      <div className="modal-dialog modal-dialog-centered" onClick={propagationModal}>
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title flex-fill">{title}</h5>

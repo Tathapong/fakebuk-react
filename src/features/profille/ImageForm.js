@@ -1,36 +1,51 @@
-import { useRef, useState } from "react";
 import Avatar from "../../components/ui/Avatar";
 import CoverImage from "../../components/ui/CoverImage";
-import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
-import { thunk_updateUser } from "../../stores/features/auth/usersSlice";
-import { actions as loadingActions } from "../../stores/loadingSlice";
 
-function ProfileImageForm({ title, profileImage, coverImage, onSuccess }) {
+import { useRef, useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+
+import { toast } from "react-toastify";
+import { thunk_updateUser } from "../../stores/features/auth/myUserSlice";
+
+function ProfileImageForm({ title, profileImage, coverImage, onSuccess, open }) {
   const dispatch = useDispatch();
   const [file, setFile] = useState(null);
-
   const inputEl = useRef();
 
+  useEffect(() => {
+    const initial = async () => {
+      setFile(null);
+      inputEl.current.value = null;
+    };
+    setTimeout(() => initial(), 300);
+  }, [open, coverImage, profileImage]);
+
   const handleClickInputUpload = () => inputEl.current.click();
+
   const handelClickSave = async () => {
     try {
-      dispatch(loadingActions.startLoading());
-      const formData = new FormData(); // ส่งข้อมูลในรูปแบบ multipart/form data ต้องกำหนดเป็น Class
+      const formData = new FormData();
 
-      // ใส่ข้อมูลเข้าไปใน formData
       if (profileImage !== undefined) formData.append("profileImage", file);
       else if (coverImage !== undefined) formData.append("coverImage", file);
 
-      dispatch(thunk_updateUser(formData));
+      await dispatch(thunk_updateUser(formData));
       toast.success("success upload");
       setFile(null);
       onSuccess();
     } catch (err) {
-      console.log(err);
-      toast.error(err.response?.data.message);
-    } finally {
-      dispatch(loadingActions.stopLoading());
+      console.log(err.message);
+      toast.error(err.message);
+    }
+  };
+  const handleClickCancel = () => {
+    setFile(null);
+    inputEl.current.value = null;
+  };
+
+  const onChangeInputFile = (ev) => {
+    if (ev.target.files[0]) {
+      setFile(ev.target.files[0]);
     }
   };
 
@@ -38,37 +53,19 @@ function ProfileImageForm({ title, profileImage, coverImage, onSuccess }) {
     <>
       <div className="d-flex justify-content-between align-items-center">
         <h5 className="mb-0">{title}</h5>
-        <input
-          type="file"
-          className="d-none"
-          ref={inputEl}
-          onChange={(ev) => {
-            if (ev.target.files[0]) setFile(ev.target.files[0]); // กำหนดเพื่อว่าเวลากดเลือกรูป หากไม่เลือก(Cancel) ตัว ev.target.files[0] มันจะเป็น undefined ทำให้ค่าใน State เปลี่ยน ซึ่งมันไม่ควรเปลี่ยนมันควรจะเป็นค่าเดิม
-          }}
-        />
+        <input type="file" className="d-none" ref={inputEl} onChange={onChangeInputFile} />
         <div>
           {file && (
             <>
               <button className="btn btn-link text-decoration-none hover-bg-gray-100" onClick={handelClickSave}>
                 Save
               </button>
-              <button
-                className="btn btn-link text-decoration-none hover-bg-gray-100"
-                onClick={() => {
-                  setFile(null); // Set state to null
-                  inputEl.current.value = null; // set value of input element to null (หากไม่ เป็น null เวลาเลือกรูปภาพอันไหนแล้วทำการ cancel และมาเลือกรูปเดิมอีกทีจะเลือกไม่ได้ เพราะ event.target.value ยัังมีค่าเดิมอยู่ มันไม่ Detect )
-                }}
-              >
+              <button className="btn btn-link text-decoration-none hover-bg-gray-100" onClick={handleClickCancel}>
                 Cancel
               </button>
             </>
           )}
-          <button
-            className="btn btn-link text-decoration-none hover-bg-gray-100"
-            onClick={() => {
-              inputEl.current.click(); // สั่งให้ input (type file) ทำการ Click
-            }}
-          >
+          <button className="btn btn-link text-decoration-none hover-bg-gray-100" onClick={handleClickInputUpload}>
             Edit
           </button>
         </div>

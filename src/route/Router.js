@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectMe } from "../stores/features/auth/usersSlice";
+import { selectMe } from "../stores/features/auth/myUserSlice";
 import { selectLoading } from "../stores/loadingSlice";
 
 import LoginPage from "../pages/LoginPage";

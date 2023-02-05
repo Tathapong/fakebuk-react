@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import { getAccesToken } from "./utilities/localstorage";
-import { thunk_getMe } from "./stores/features/auth/usersSlice";
+import { thunk_getMe } from "./stores/features/auth/myUserSlice";
 import Spinner from "./components/ui/Spinner";
 
 function App() {
@@ -21,7 +21,7 @@ function App() {
       }
     };
     fetchMe();
-  }, []);
+  }, [dispatch]);
 
   return (
     <>

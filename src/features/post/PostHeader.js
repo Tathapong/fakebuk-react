@@ -4,11 +4,13 @@ import PostForm from "./PostForm";
 import DeleteConfirm from "./DeleteConfirm";
 
 import { Link } from "react-router-dom";
-import { timeSince } from "../../utilities/dateFormat";
 import { useState, useCallback } from "react";
-import { useClickOutSide } from "../../hooks/useClickOutside";
-import { selectMe } from "../../stores/features/auth/usersSlice";
 import { useSelector, useDispatch } from "react-redux";
+
+import { timeSince } from "../../utilities/dateFormat";
+import { useClickOutSide } from "../../hooks/useClickOutside";
+
+import { selectMe } from "../../stores/features/auth/myUserSlice";
 import { thunk_updatePost, thunk_deletePost } from "../../stores/features/posts/postSlice";
 
 function PostHeader({ post }) {

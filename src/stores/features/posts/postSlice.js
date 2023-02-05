@@ -25,8 +25,8 @@ export const postsSlice = createSlice({
       state[idx].Likes?.push(like);
     },
     deleteLike: (state, action) => {
-      const { idx, userId } = action.payload;
-      state[idx].Likes = state[idx].Likes.filter((item) => item.userId !== userId);
+      const { idx, myUserId } = action.payload;
+      state[idx].Likes = state[idx].Likes.filter((item) => item.userId !== myUserId);
     },
     addComment: (state, action) => {
       const { postId, comment } = action.payload;
@@ -38,38 +38,40 @@ export const postsSlice = createSlice({
       const { postId, commentId, commentInput } = action.payload;
       const idx = state.findIndex((item) => item.id === postId);
 
-      state[idx].Comments?.map((item) => {
-        if (item.id === commentId) item.title = commentInput;
-        return item;
-      });
+      if (idx !== -1) {
+        state[idx].Comments?.map((item) => {
+          if (item.id === commentId) item.title = commentInput;
+          return item;
+        });
+      }
     },
     deleteComment: (state, action) => {
       const { postId, commentId } = action.payload;
       const idx = state.findIndex((item) => item.id === postId);
-
-      const commentIdx = state[idx].Comments.findIndex((item) => item.id === commentId);
-      state[idx].Comments?.splice(commentIdx, 1);
+      if (idx !== -1) {
+        const commentIdx = state[idx].Comments.findIndex((item) => item.id === commentId);
+        if (commentIdx) state[idx].Comments?.splice(commentIdx, 1);
+      }
     }
   }
 });
 
-export const thunk_getUserPost = (userId) => async (dispatch) => {
+export const thunk_getUserPost = (userId, friend) => async (dispatch, getState) => {
   try {
-    dispatch(loadingActions.startLoading());
-    const res = await postService.getUserPost("friend", userId);
+    if (!getState().loading) await dispatch(loadingActions.startLoading());
+    const res = await postService.getUserPost(friend, userId);
     const { posts } = res.data;
     dispatch(actions.setPosts(posts));
   } catch (err) {
     throw err.response.data;
   } finally {
-    dispatch(loadingActions.stopLoading());
+    if (getState().loading) dispatch(loadingActions.stopLoading());
   }
 };
 
 export const thunk_createPost = (input) => async (dispatch) => {
   try {
     dispatch(loadingActions.startLoading());
-
     const res = await postService.createPost(input);
     const { post } = res.data;
     dispatch(actions.addPost(post));
@@ -111,13 +113,12 @@ export const thunk_toggleLike = (postId) => async (dispatch, getState) => {
     const { like } = res.data;
 
     const idx = getState().post.findIndex((item) => item.id === postId);
-    const userId = getState().user.id;
+    const myUserId = getState().myUser.id;
 
     if (like) dispatch(actions.addLike({ idx, like }));
-    else dispatch(actions.deleteLike({ idx, userId }));
+    else dispatch(actions.deleteLike({ idx, myUserId }));
   } catch (err) {
     throw err.response.data;
-  } finally {
   }
 };
 
@@ -128,7 +129,6 @@ export const thunk_createComment = (postId, input) => async (dispatch) => {
     dispatch(actions.addComment({ postId, comment }));
   } catch (err) {
     throw err.response.data;
-  } finally {
   }
 };
 export const thunk_updateComment = (postId, commentId, commentInput) => async (dispatch) => {
@@ -137,7 +137,6 @@ export const thunk_updateComment = (postId, commentId, commentInput) => async (d
     dispatch(actions.updateComment({ postId, commentId, commentInput }));
   } catch (err) {
     throw err.response.data;
-  } finally {
   }
 };
 export const thunk_deleteComment = (postId, commentId) => async (dispatch) => {
@@ -146,18 +145,17 @@ export const thunk_deleteComment = (postId, commentId) => async (dispatch) => {
     dispatch(actions.deleteComment({ postId, commentId }));
   } catch (err) {
     throw err.response.data;
-  } finally {
   }
 };
 
-export default postsSlice.reducer;
-export const actions = postsSlice.actions;
-
 export const selectUserPost = (state) => state.post;
 export const selectIsUserLike = createSelector(
-  [selectUserPost, (state, postId) => postId, (state) => state.user.id],
+  [selectUserPost, (state, postId) => postId, (state) => state.myUser.id],
   (posts, postId, userId) => {
     const post = posts.find((item) => item.id === postId);
     if (post) return post.Likes?.find((item) => item.userId === userId);
   }
 );
+
+export default postsSlice.reducer;
+export const actions = postsSlice.actions;
